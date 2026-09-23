@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora Mangal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+  <style>
+    :root {
+      --ground: #eef2ea;
+      --card: #ffffff;
+      --ink: #16241c;
+      --muted: #4e5f54;
+      --line: #c3d1c0;
+      --mangue: #1a6343;
+      --mangue-bg: #dcefe3;
+      --focus: #2f8f63;
+      --erro: #b3261e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --ground: #111814; --card: #1a241e; --ink: #eef5f0; --muted: #a9bbae;
+        --line: #34453a; --mangue: #7fdcab; --mangue-bg: #1f3a2b; --focus: #7fdcab; --erro: #ff8a80;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #111814; --card: #1a241e; --ink: #eef5f0; --muted: #a9bbae;
+      --line: #34453a; --mangue: #7fdcab; --mangue-bg: #1f3a2b; --focus: #7fdcab; --erro: #ff8a80;
+    }
+  
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--ground);
+      color: var(--ink);
+      font: 18px/1.45 "Atkinson Hyperlegible", system-ui, sans-serif;
+      padding-inline: 16px;
+      padding-block: 32px 48px;
+    }
+    main { max-width: 480px; margin: 0 auto; display: grid; gap: 20px; }
+    h1 {
+      margin: 0;
+      font: 800 2rem/1.1 "Bricolage Grotesque", system-ui, sans-serif;
+      color: var(--mangue);
+    }
+    header p { margin: 6px 0 0; color: var(--muted); }
+  
+    form { display: grid; gap: 16px; }
+    #linhas { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  
+    .linha {
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .campo { display: grid; gap: 6px; }
+    .campo > span { font-weight: 700; color: var(--muted); font-size: .95rem; }
+  
+    select, input {
+      font: inherit;
+      font-size: 1.15rem;
+      color: var(--ink);
+      background: var(--ground);
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 0 14px;
+      min-height: 56px;
+      width: 100%;
+    }
+    select:focus-visible, input:focus-visible, button:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .qtd { position: relative; }
+    .qtd input { padding-right: 84px; font-weight: 700; }
+    .qtd .unidade {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); font-weight: 700;
+    }
+    .linha.invalida input { border-color: var(--erro); }
+    .aviso { color: var(--erro); font-weight: 700; font-size: .95rem; }
+  
+    .vale {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--mangue-bg);
+      color: var(--mangue);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+    .vale > span { font-weight: 700; }
+    .vale strong {
+      font: 800 2rem/1 "Bricolage Grotesque", system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .vale small { font-size: 1rem; font-weight: 700; margin-left: 4px; }
+  
+    button {
+      font: inherit; font-weight: 700; cursor: pointer;
+      border-radius: 12px; background: transparent;
+    }
+    .remover {
+      justify-self: start;
+      border: 0; padding: 8px 0;
+      color: var(--muted); text-decoration: underline;
+    }
+    .remover:hover { color: var(--erro); }
+    .adicionar {
+      min-height: 56px;
+      font-size: 1.1rem;
+      color: var(--mangue);
+      border: 2px dashed var(--mangue);
+    }
+    .adicionar:hover { background: var(--mangue-bg); }
+  
+    .total {
+      background: var(--mangue);
+      color: var(--ground);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      gap: 4px;
+    }
+    .total > span { font-weight: 700; font-size: 1.05rem; }
+    .total strong {
+      font: 800 3.5rem/1 "Bricolage Grotesque", system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .total small { font-size: 1.4rem; margin-left: 6px; }
+  </style>
+</head>
+<body>
+  
+  <main>
+    <header>
+      <h1>Calculadora Mangal</h1>
+      <p>Escolha o material e digite quanto você tem. O valor aparece na hora.</p>
+    </header>
+  
+    <form id="calc" novalidate>
+      <ul id="linhas"></ul>
+  
+      <button type="button" id="adicionar" class="adicionar">+ Adicionar outro material</button>
+  
+      <output class="total" aria-live="polite">
+        <span>Total</span>
+        <strong><span id="total">0</span><small>Mangal</small></strong>
+      </output>
+    </form>
+  </main>
+  
+  <template id="modelo">
+    <li class="linha">
+      <label class="campo">
+        <span>Material</span>
+        <select class="item"></select>
+      </label>
+      <label class="campo">
+        <span>Quantidade</span>
+        <div class="qtd">
+          <input type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+          <span class="unidade">kg</span>
+        </div>
+      </label>
+      <span class="aviso" hidden>Digite só números, por exemplo 1,5</span>
+      <div class="vale">
+        <span>Vale</span>
+        <strong><span class="parcial">0</span><small>Mangal</small></strong>
+      </div>
+      <button type="button" class="remover">Remover este material</button>
+    </li>
+  </template>
+  
+  <script>
+    // valorKg = coluna D; impacto = F + G + H da planilha
+    const ITENS = [
+      { nome: 'Garrafa PET (2 L)',                          valorKg: 1.5, impacto: 14,   unidade: 'kg' },
+      { nome: 'Plástico no geral (tampas, potes, frascos)', valorKg: 0.7, impacto: 14,   unidade: 'kg' },
+      { nome: 'Metal',                                      valorKg: 1.5, impacto: 9.2,  unidade: 'kg' },
+      { nome: 'Latinha de alumínio',                        valorKg: 8.0, impacto: 11.4, unidade: 'kg' },
+      { nome: 'Papel/papelão',                              valorKg: 0.5, impacto: 9.1,  unidade: 'kg' },
+      { nome: 'Embalagem "longa vida"',                     valorKg: 0.7, impacto: 11.5, unidade: 'kg' },
+      { nome: 'Óleo',                                       valorKg: 1.0, impacto: 11.4, unidade: 'litros' },
+    ];
+  
+    const $linhas = document.getElementById('linhas');
+    const $modelo = document.getElementById('modelo');
+    const $total = document.getElementById('total');
+  
+    function adicionarLinha(indice = 0, qtd = '') {
+      const linha = $modelo.content.firstElementChild.cloneNode(true);
+      const select = linha.querySelector('.item');
+      ITENS.forEach((it, i) => select.add(new Option(it.nome, i)));
+      select.value = indice;
+      linha.querySelector('input').value = qtd;
+      $linhas.append(linha);
+      calcular();
+      return linha;
+    }
+  
+    function calcular() {
+      let total = 0;
+      const linhas = $linhas.querySelectorAll('.linha');
+  
+      linhas.forEach(linha => {
+        const item = ITENS[linha.querySelector('.item').value];
+        linha.querySelector('.unidade').textContent = item.unidade;
+  
+        const texto = linha.querySelector('input').value.trim().replace(',', '.');
+        const qtd = texto === '' ? 0 : Number(texto);
+        const invalido = Number.isNaN(qtd) || qtd < 0;
+        linha.classList.toggle('invalida', invalido);
+        linha.querySelector('.aviso').hidden = !invalido;
+  
+        // a planilha mostra cada linha arredondada e o TOTAL soma o que aparece
+        const valor = invalido ? 0 : Math.round(qtd * item.valorKg * item.impacto);
+        linha.querySelector('.parcial').textContent = valor.toLocaleString('pt-BR');
+        total += valor;
+      });
+  
+      $linhas.querySelectorAll('.remover').forEach(b => b.hidden = linhas.length === 1);
+      $total.textContent = total.toLocaleString('pt-BR');
+    }
+  
+    $linhas.addEventListener('input', calcular);
+    $linhas.addEventListener('change', calcular);
+    $linhas.addEventListener('click', e => {
+      if (!e.target.closest('.remover')) return;
+      e.target.closest('.linha').remove();
+      calcular();
+    });
+    document.getElementById('adicionar').addEventListener('click', () => {
+      const nova = adicionarLinha();
+      nova.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      nova.querySelector('.item').focus({ preventScroll: true });
+    });
+    document.getElementById('calc').addEventListener('submit', e => e.preventDefault());
+  
+    adicionarLinha(5, '0,98');
+  </script>
+</body>
+</html>
