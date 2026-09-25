@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Calculadora Mangal</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
   <style>
@@ -135,11 +136,18 @@
       font-variant-numeric: tabular-nums;
     }
     .total small { font-size: 1.4rem; margin-left: 6px; }
+
+    /* logos têm texto escuro sobre transparente: fundo branco mantém legível no modo escuro */
+    .marca { background: #fff; border-radius: 12px; padding: 8px; display: block; }
+    .logo { justify-self: start; width: 96px; height: auto; }
+    footer { max-width: 480px; margin: 32px auto 0; }
+    footer .marca { width: 100%; height: auto; }
   </style>
 </head>
 <body>
   
   <main>
+    <img class="marca logo" src="img/andadas.webp" alt="Andadas Ecológicas" width="1849" height="2000">
     <header>
       <h1>Calculadora Mangal</h1>
       <p>Escolha o material e digite quanto você tem. O valor aparece na hora.</p>
@@ -152,10 +160,14 @@
   
       <output class="total" aria-live="polite">
         <span>Total</span>
-        <strong><span id="total">0</span><small>Mangal</small></strong>
+        <strong><span id="total">0</span><small id="total-unidade">Mangal</small></strong>
       </output>
     </form>
   </main>
+
+  <footer>
+    <img class="marca" src="img/parceiros.webp" alt="Realização: Andadas Ecológicas e Guardiões do Mar. Parceria: Petrobras." width="2000" height="320">
+  </footer>
   
   <template id="modelo">
     <li class="linha">
@@ -173,7 +185,7 @@
       <span class="aviso" hidden>Digite só números, por exemplo 1,5</span>
       <div class="vale">
         <span>Vale</span>
-        <strong><span class="parcial">0</span><small>Mangal</small></strong>
+        <strong><span class="parcial">0</span><small class="parcial-unidade">Mangal</small></strong>
       </div>
       <button type="button" class="remover">Remover este material</button>
     </li>
@@ -195,6 +207,8 @@
     const $modelo = document.getElementById('modelo');
     const $total = document.getElementById('total');
   
+    const unidade = n => n <= 1 ? 'Mangal' : 'Mangais';
+
     function adicionarLinha(indice = 0, qtd = '') {
       const linha = $modelo.content.firstElementChild.cloneNode(true);
       const select = linha.querySelector('.item');
@@ -223,11 +237,13 @@
         // a planilha mostra cada linha arredondada e o TOTAL soma o que aparece
         const valor = invalido ? 0 : Math.round(qtd * item.valorKg * item.impacto);
         linha.querySelector('.parcial').textContent = valor.toLocaleString('pt-BR');
+        linha.querySelector('.parcial-unidade').textContent = unidade(valor);
         total += valor;
       });
   
       $linhas.querySelectorAll('.remover').forEach(b => b.hidden = linhas.length === 1);
       $total.textContent = total.toLocaleString('pt-BR');
+      document.getElementById('total-unidade').textContent = unidade(total);
     }
   
     $linhas.addEventListener('input', calcular);
