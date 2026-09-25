@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="only light">
   <title>Calculadora Mangal</title>
   <link rel="icon" type="image/png" href="img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,19 +20,6 @@
       --focus: #2f8f63;
       --erro: #b3261e;
     }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        color-scheme: dark;
-        --ground: #111814; --card: #1a241e; --ink: #eef5f0; --muted: #a9bbae;
-        --line: #34453a; --mangue: #7fdcab; --mangue-bg: #1f3a2b; --focus: #7fdcab; --erro: #ff8a80;
-      }
-    }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --ground: #111814; --card: #1a241e; --ink: #eef5f0; --muted: #a9bbae;
-      --line: #34453a; --mangue: #7fdcab; --mangue-bg: #1f3a2b; --focus: #7fdcab; --erro: #ff8a80;
-    }
-  
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -137,7 +125,6 @@
     }
     .total small { font-size: 1.4rem; margin-left: 6px; }
 
-    /* logos têm texto escuro sobre transparente: fundo branco mantém legível no modo escuro */
     .marca { background: #fff; border-radius: 12px; padding: 8px; display: block; }
     .logo { justify-self: start; width: 96px; height: auto; }
     footer { max-width: 480px; margin: 32px auto 0; }
